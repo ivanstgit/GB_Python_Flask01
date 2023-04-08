@@ -9,9 +9,14 @@ Article #{{ id }}
 <h1 class="article-header">{{ article.get("title") }}</h1>
 <p class="article-meta">
     <em>
+        {% if current_user.is_authenticated %}
         <a href="{{ url_for('user.details', id=article.get('author')) }}">
             {{ author }}
-        </a>, {{ article.get("posted") }}
+        </a>
+        {% else %}
+        {{author}}
+        {% endif %}
+        , {{ article.get("posted") }}
     </em>
 </p>
 
