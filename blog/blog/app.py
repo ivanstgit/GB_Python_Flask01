@@ -1,28 +1,20 @@
-from time import time
-from flask import Flask
-from flask import g
+from flask import Flask, render_template
 
-app = Flask(__name__)
-
-
-@app.route("/")
-def index():
-    return "Hello web!"
+from blog.user import views as users
+from blog.article import views as articles
 
 
-@app.before_request
-def process_before_request():
-    """
-    Sets start_time to `g` object
-    """
-    g.start_time = time()
+def create_app() -> Flask:
+    app = Flask(__name__)
+    register_blueprints(app)
+
+    @app.route("/")
+    def index():
+        return render_template("index.html")
+
+    return app
 
 
-@app.after_request
-def process_after_request(response):
-    """
-    adds process time in headers
-    """
-    if hasattr(g, "start_time"):
-        response.headers["process-time"] = time() - g.start_time
-    return response
+def register_blueprints(app: Flask):
+    app.register_blueprint(users.user)
+    app.register_blueprint(articles.article)
