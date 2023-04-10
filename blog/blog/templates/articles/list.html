@@ -15,17 +15,21 @@ Article list
             </tr>
         </thead>
         <tbody>
-            {% for article_id, article in articles.items() %}
+            {% for article in articles %}
             <tr>
                 <td>
-                    <a href="{{ url_for('article.details', id=article_id) }}">
+                    <a href="{{ url_for('article.details', id=article.get('id')) }}">
                         {{ article.get("title") }}
                     </a>
                 </td>
                 <td>
+                    {% if current_user.is_authenticated %}
                     <a href="{{ url_for('user.details', id=article.get('author')) }}">
-                        {{ users.get(article.get("author")) }}
+                        {{ article.get("author_name") }}
                     </a>
+                    {% else %}
+                    {{ article.get("author_name") }}
+                    {% endif %}
                 </td>
                 <td> {{article.get("posted")}} </td>
             </tr>

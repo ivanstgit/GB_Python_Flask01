@@ -1,8 +1,7 @@
 from datetime import date
 from flask import Blueprint, render_template
 from werkzeug.exceptions import NotFound
-
-from blog.user.views import USERS
+from blog.views.user.views import get_user_desc
 
 article = Blueprint(
     "article", __name__, url_prefix="/articles", static_folder="../static"
@@ -31,17 +30,28 @@ ARTICLES = {
 
 
 @article.route("/", endpoint="list")
-def list():
-    return render_template("/articles/list.html", articles=ARTICLES, users=USERS)
+def get_list():
+    articles = [
+        {
+            "id": k,
+            "author": v.get("author"),
+            "author_name": get_user_desc(v.get("author", 0)),
+            "title": v.get("title", ""),
+            "posted": v.get("posted", ""),
+        }
+        for k, v in ARTICLES.items()
+    ]
+
+    return render_template("/articles/list.html", articles=articles)
 
 
 @article.route("/<int:id>/", endpoint="details")
-def details(id: int):
+def get_details(id: int):
     try:
         article = ARTICLES[id]
         author = article.get("author")
         if author:
-            user = USERS.get(author)
+            user = get_user_desc(author)
         else:
             user = None
     except KeyError:

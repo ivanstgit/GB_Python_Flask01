@@ -7,11 +7,18 @@ Users list
 <h1>Users</h1>
 <div>
     <ul>
-        {% for user_id in users %}
+        {% for user in users %}
         <li>
-            <a href="{{ url_for('user.details', id=user_id) }}">
-                {{ users[user_id] }}
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('user.details', id=user.id) }}">
+                {{ user }}
             </a>
+            {% else %}
+            {{ user }}
+            {% endif %}
+            {% if user.is_staff %}
+            <span class="badge bg-secondary">staff</span>
+            {% endif %}
         </li>
         {% endfor %}
     </ul>
