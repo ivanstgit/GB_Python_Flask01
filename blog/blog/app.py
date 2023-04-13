@@ -1,6 +1,6 @@
-from json import load
-from os import getenv, path
+import os
 from flask import Flask, render_template
+from flask_migrate import Migrate
 
 from blog.models.database import db
 from blog.models.user import User
@@ -8,13 +8,11 @@ from blog.views.auth import auth, login_manager
 from blog.views.user import views as users
 from blog.views.article import views as articles
 
-CONFIG_PATH = getenv("CONFIG_PATH", path.join("..", "config_dev.json"))
-
 
 def create_app() -> Flask:
     app = Flask(__name__)
-    app.config.from_file(CONFIG_PATH, load)
 
+    load_config(app)
     init_components(app)
     register_blueprints(app)
 
@@ -25,9 +23,15 @@ def create_app() -> Flask:
     return app
 
 
+def load_config(app: Flask):
+    cfg_name = os.environ.get("CONFIG_NAME") or "BaseConfig"  # "ProductionConfig"
+    app.config.from_object(f"blog.configs.{cfg_name}")
+
+
 def init_components(app: Flask):
     # database
     db.init_app(app)
+    migrate = Migrate(app, db, compare_type=True)
 
     # login manager
     login_manager.init_app(app)
