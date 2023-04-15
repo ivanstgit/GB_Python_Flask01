@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 
 from blog.models.database import db
 from blog.models.user import User
+from blog.security import flask_bcrypt
 from blog.views.auth import auth, login_manager
 from blog.views.user import views as users
 from blog.views.article import views as articles
@@ -32,6 +33,9 @@ def init_components(app: Flask):
     # database
     db.init_app(app)
     migrate = Migrate(app, db, compare_type=True)
+
+    # security
+    flask_bcrypt.init_app(app)
 
     # login manager
     login_manager.init_app(app)
