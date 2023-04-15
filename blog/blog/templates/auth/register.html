@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 {% from "macro/formhelpers.html" import render_field, render_alert, render_submit %}
 {% block title %}
-Login
+Register
 {% endblock %}
 {% block body %}
-<h1>Login</h1>
+<h1>Register</h1>
 {% if error %}
-{{render_alert(error)}}
+{{ render_alert(error) }}
 {% endif %}
 <form method="POST">
     {# csrf protection #}
     {{ form.csrf_token() }}
     {# show inputs #}
-    {% for field in ['email', 'password'] %}
+    {% for field in ['first_name', 'last_name', 'email', 'password', 'confirm'] %}
     {{ render_field(form[field]) }}
     {% endfor %}
     {# submit #}

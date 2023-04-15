@@ -4,6 +4,7 @@ import os
 class BaseConfig(object):
     DEBUG = False
     TESTING = False
+    WTF_CSRF_ENABLED = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///db.sqlite"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "abcdefg123456"
