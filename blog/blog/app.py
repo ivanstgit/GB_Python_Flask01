@@ -7,6 +7,7 @@ from blog.models.user import User
 from blog.security import flask_bcrypt
 from blog.views.auth import auth, login_manager
 from blog.views.user import views as users
+from blog.views.author import views as authors
 from blog.views.article import views as articles
 
 
@@ -48,5 +49,6 @@ def init_components(app: Flask):
 
 def register_blueprints(app: Flask):
     app.register_blueprint(users.user)
+    app.register_blueprint(authors.author)
     app.register_blueprint(articles.article)
     app.register_blueprint(auth)

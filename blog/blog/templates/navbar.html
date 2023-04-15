@@ -10,7 +10,8 @@
             <div class="navbar-nav">
                 {% for (endpoint, label) in [
                 ('user.list', 'Users'),
-                ('article.list', 'Articles')
+                ('article.list', 'Articles'),
+                ('author.list', 'Authors'),
                 ]
                 %}
                 <a href="{{ url_for(endpoint) }}"
