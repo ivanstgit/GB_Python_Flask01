@@ -1,6 +1,7 @@
 import os
 from flask import Flask, render_template
 from flask_migrate import Migrate
+from blog.cli import register_commands
 
 from blog.models.database import db
 from blog.models.user import User
@@ -17,6 +18,7 @@ def create_app() -> Flask:
     load_config(app)
     init_components(app)
     register_blueprints(app)
+    register_commands(app)
 
     @app.route("/")
     def index():

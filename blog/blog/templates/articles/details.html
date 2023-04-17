@@ -4,11 +4,22 @@ Article #{{ article.id }}: {{ article.title }}
 {% endblock %}
 {% block body %}
 <h1>{{ article.title }}</h1>
-<div>
-    <div>Published {{ article.dt_created }}</div>
-    <div>by {{ article.author.user }}</div>
-    <div>
-        <p>{{ article.body }}</p>
+<div class="row">
+    <div class="col">
+        <div>Published {{ article.dt_created }}</div>
+        <div>by {{ article.author.user }}</div>
     </div>
+    {% if article.tags %}
+    <div class="col">
+        <div>Tags:</div>
+        {% for tag in article.tags %}
+        <span class="badge text-bg-info">{{ tag.name }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
+<div>
+    <p class="lh-base">{{ article.body }}</p>
+</div>
+
 {% endblock %}
