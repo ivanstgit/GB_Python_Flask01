@@ -1,7 +1,6 @@
 from flask import (
     Blueprint,
     current_app,
-    flash,
     render_template,
     request,
     redirect,

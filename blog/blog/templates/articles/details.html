@@ -1,27 +1,14 @@
 {% extends 'base.html' %}
-
 {% block title %}
-Article #{{ id }}
+Article #{{ article.id }}: {{ article.title }}
 {% endblock %}
-
 {% block body %}
-
-<h1 class="article-header">{{ article.get("title") }}</h1>
-<p class="article-meta">
-    <em>
-        {% if current_user.is_authenticated %}
-        <a href="{{ url_for('user.details', id=article.get('author')) }}">
-            {{ author }}
-        </a>
-        {% else %}
-        {{author}}
-        {% endif %}
-        , {{ article.get("posted") }}
-    </em>
-</p>
-
-<p class="article-content">
-    {{ article.get("content") }}
-</p>
-
+<h1>{{ article.title }}</h1>
+<div>
+    <div>Published {{ article.dt_created }}</div>
+    <div>by {{ article.author.user }}</div>
+    <div>
+        <p>{{ article.body }}</p>
+    </div>
+</div>
 {% endblock %}
