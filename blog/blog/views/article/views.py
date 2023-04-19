@@ -2,12 +2,14 @@ from flask import Blueprint, current_app, redirect, render_template, request, ur
 from flask_login import current_user, login_required
 from werkzeug.exceptions import NotFound
 
+from sqlalchemy.orm import joinedload
 from sqlalchemy.exc import IntegrityError
 
 from blog.forms.article import CreateArticleForm
 from blog.models.article import Article
 from blog.models.author import Author
 from blog.models.database import db
+from blog.models.tag import Tag
 
 article = Blueprint(
     "article", __name__, url_prefix="/articles", static_folder="../static"
@@ -22,7 +24,11 @@ def get_list():
 
 @article.route("/<int:id>/", endpoint="details")
 def get_details(id: int):
-    article = Article.query.filter_by(id=id).one_or_none()
+    article = (
+        Article.query.filter_by(id=id)
+        .options(joinedload(Article.tags))  # подгружаем связанные теги!
+        .one_or_none()
+    )
     if article is None:
         raise NotFound
     return render_template("articles/details.html", article=article)
@@ -33,6 +39,9 @@ def get_details(id: int):
 def create_article():
     error = None
     form = CreateArticleForm(request.form)
+    # добавляем доступные теги в форму
+    form.tags.choices = [(tag.id, tag.name) for tag in Tag.query.order_by("name")]
+
     if request.method == "POST" and form.validate_on_submit():
         if current_user.author:  # type: ignore
             # use existing author if present
@@ -43,9 +52,15 @@ def create_article():
             db.session.add(article_author)
             # db.session.flush()
 
-        article = Article(title=form.title.data.strip(), body=form.body.data)
+        article = Article(title=form.title.data.strip(), body=form.body.data)  # type: ignore
         article.author = article_author
+        if form.tags.data:  # если в форму были переданы теги (были выбраны)
+            selected_tags = Tag.query.filter(Tag.id.in_(form.tags.data))
+            for tag in selected_tags:
+                article.tags.append(tag)  # добавляем выбранные теги к статье
+
         db.session.add(article)
+
         try:
             db.session.commit()
         except IntegrityError:
