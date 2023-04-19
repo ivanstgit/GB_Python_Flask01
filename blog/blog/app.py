@@ -1,12 +1,13 @@
 import os
 from flask import Flask, render_template
 from flask_migrate import Migrate
+
 from blog.cli import register_commands
 
 from blog.models.database import db
 from blog.models.user import User
 from blog.security import flask_bcrypt
-from blog.views.auth import auth, login_manager
+from blog.views.auth import auth_app, login_manager
 from blog.views.user import views as users
 from blog.views.author import views as authors
 from blog.views.article import views as articles
@@ -33,12 +34,17 @@ def load_config(app: Flask):
 
 
 def init_components(app: Flask):
+    from blog.admin import admin
+
     # database
     db.init_app(app)
     migrate = Migrate(app, db, compare_type=True)
 
     # security
     flask_bcrypt.init_app(app)
+
+    # admin
+    admin.init_app(app)
 
     # login manager
     login_manager.init_app(app)
@@ -50,7 +56,7 @@ def init_components(app: Flask):
 
 
 def register_blueprints(app: Flask):
-    app.register_blueprint(users.user)
-    app.register_blueprint(authors.author)
-    app.register_blueprint(articles.article)
-    app.register_blueprint(auth)
+    app.register_blueprint(users.user_app)
+    app.register_blueprint(authors.author_app)
+    app.register_blueprint(articles.article_app)
+    app.register_blueprint(auth_app)

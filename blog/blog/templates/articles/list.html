@@ -18,13 +18,13 @@ Article list
             {% for article in articles %}
             <tr>
                 <td>
-                    <a href="{{ url_for('article.details', id=article.id) }}">
+                    <a href="{{ url_for('article_app.details', id=article.id) }}">
                         {{ article.title }}
                     </a>
                 </td>
                 <td>
                     {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('user.details', id=article.author.user.id) }}">
+                    <a href="{{ url_for('user_app.details', id=article.author.user.id) }}">
                         {{ article.author.user }}
                     </a>
                     {% else %}
@@ -36,6 +36,6 @@ Article list
             {% endfor %}
         </tbody>
     </table>
-    <a href="{{ url_for('article.create') }}">Create new</a>
+    <a href="{{ url_for('article_app.create') }}">Create new</a>
 </div>
 {% endblock %}
