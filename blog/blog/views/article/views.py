@@ -11,18 +11,18 @@ from blog.models.author import Author
 from blog.models.database import db
 from blog.models.tag import Tag
 
-article = Blueprint(
-    "article", __name__, url_prefix="/articles", static_folder="../static"
+article_app = Blueprint(
+    "article_app", __name__, url_prefix="/articles", static_folder="../static"
 )
 
 
-@article.route("/", endpoint="list")
+@article_app.route("/", endpoint="list")
 def get_list():
     articles = Article.query.all()
     return render_template("articles/list.html", articles=articles)
 
 
-@article.route("/<int:id>/", endpoint="details")
+@article_app.route("/<int:id>/", endpoint="details")
 def get_details(id: int):
     article = (
         Article.query.filter_by(id=id)
@@ -34,7 +34,7 @@ def get_details(id: int):
     return render_template("articles/details.html", article=article)
 
 
-@article.route("/create/", methods=["GET", "POST"], endpoint="create")
+@article_app.route("/create/", methods=["GET", "POST"], endpoint="create")
 @login_required
 def create_article():
     error = None

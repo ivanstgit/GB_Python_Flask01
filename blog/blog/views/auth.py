@@ -20,7 +20,7 @@ from blog.forms.user import LoginForm, RegistrationForm
 from blog.models import User
 from blog.models.database import db
 
-auth = Blueprint("auth", __name__)
+auth_app = Blueprint("auth_app", __name__)
 login_manager = LoginManager()
 
 
@@ -34,7 +34,7 @@ def unauthorized():
     return redirect(url_for("auth.login"))
 
 
-@auth.route("/login/", methods=["GET", "POST"], endpoint="login")
+@auth_app.route("/login/", methods=["GET", "POST"], endpoint="login")
 def login():
     if current_user.is_authenticated:  # type: ignore
         return redirect("index")
@@ -55,21 +55,21 @@ def login():
     return render_template("auth/login.html", form=form)
 
 
-@auth.route("/login-as/", methods=["GET", "POST"], endpoint="login-as")  # type: ignore
+@auth_app.route("/login-as/", methods=["GET", "POST"], endpoint="login-as")  # type: ignore
 def login_as():
     if not (current_user.is_authenticated and current_user.is_staff):  # type: ignore
         # non-admin users should not know about this feature
         raise NotFound
 
 
-@auth.route("/logout/", endpoint="logout")
+@auth_app.route("/logout/", endpoint="logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for("index"))
 
 
-@auth.route("/register/", methods=["GET", "POST"], endpoint="register")
+@auth_app.route("/register/", methods=["GET", "POST"], endpoint="register")
 def register():
     if current_user.is_authenticated:  # type: ignore
         return redirect("index")
@@ -102,5 +102,5 @@ def register():
 
 __all__ = [
     "login_manager",
-    "auth",
+    "auth_app",
 ]

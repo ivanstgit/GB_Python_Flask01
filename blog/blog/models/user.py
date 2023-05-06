@@ -34,3 +34,6 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"<User #{self.first_name} {self.last_name!r}>"
+
+    def __str__(self):
+        return f"<User #{self.first_name} {self.last_name} ({self.email})>"

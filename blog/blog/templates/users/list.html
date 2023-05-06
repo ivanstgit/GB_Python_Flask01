@@ -10,7 +10,7 @@ Users list
         {% for user in users %}
         <li>
             {% if current_user.is_authenticated %}
-            <a href="{{ url_for('user.details', id=user.id) }}">
+            <a href="{{ url_for('user_app.details', id=user.id) }}">
                 {{ user }}
             </a>
             {% else %}

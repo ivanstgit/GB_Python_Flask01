@@ -4,16 +4,18 @@ from werkzeug.exceptions import NotFound
 
 from blog.models.user import User
 
-user = Blueprint("user", __name__, url_prefix="/users", static_folder="../static")
+user_app = Blueprint(
+    "user_app", __name__, url_prefix="/users", static_folder="../static"
+)
 
 
-@user.route("/", endpoint="list")
+@user_app.route("/", endpoint="list")
 def list():
     users = User.query.all()
     return render_template("/users/list.html", users=users)
 
 
-@user.route("/<int:id>/", endpoint="details")
+@user_app.route("/<int:id>/", endpoint="details")
 @login_required
 def details(id: int):
     user = User.query.filter_by(id=id).one_or_none()
