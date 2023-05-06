@@ -1,13 +1,15 @@
 from flask_combo_jsonapi import Api
-from combojsonapi.spec import ApiSpecPlugin
 
-from blog.api.tag import TagList, TagDetail
-from blog.api.user import UserList, UserDetail
-from blog.api.author import AuthorList, AuthorDetail
-from blog.api.article import ArticleList, ArticleDetail
+api = Api()
 
 
-def create_api_spec_plugin(app):
+def init_api(app):
+    from combojsonapi.spec import ApiSpecPlugin
+    from combojsonapi.event import EventPlugin
+    from combojsonapi.permission import PermissionPlugin
+
+    event_plugin = EventPlugin()
+
     api_spec_plugin = ApiSpecPlugin(
         app=app,
         tags={
@@ -17,24 +19,29 @@ def create_api_spec_plugin(app):
             "Article": "Article API",
         }
     )
-    return api_spec_plugin
+
+    permission_plugin = PermissionPlugin(strict=False)
+
+    api.plugins = [
+        event_plugin,
+        api_spec_plugin,
+        permission_plugin
+    ]
+
+    api.init_app(app)
 
 
-def init_api(app):
-    api_spec_plugin = create_api_spec_plugin(app)
+def register_api_routes(url_prefix):
+    from blog.api.tag import TagList, TagDetail
+    from blog.api.user import UserList, UserDetail
+    from blog.api.author import AuthorList, AuthorDetail
+    from blog.api.article import ArticleList, ArticleDetail
 
-    api = Api(
-        app,
-        plugins=[
-            api_spec_plugin,
-        ],
-    )
-
-    api.route(TagList, "tag_list", "/api/tags/", tag="Tag")
-    api.route(TagDetail, "tag_detail", "/api/tags/<int:id>/", tag="Tag")
-    api.route(UserList, "user_list", "/api/users/", tag="User")
-    api.route(UserDetail, "user_detail", "/api/users/<int:id>/", tag="User")
-    api.route(AuthorList, "author_list", "/api/authors/", tag="Author")
-    api.route(AuthorDetail, "author_detail", "/api/authors/<int:id>/", tag="Author")
-
-    return api
+    api.route(TagList, "tag_list", url_prefix + "/tags/", tag="Tag")
+    api.route(TagDetail, "tag_detail", url_prefix + "/tags/<int:id>/", tag="Tag")
+    api.route(UserList, "user_list", url_prefix + "/users/", tag="User")
+    api.route(UserDetail, "user_detail", url_prefix + "/users/<int:id>/", tag="User")
+    api.route(AuthorList, "author_list", url_prefix + "/authors/", tag="Author")
+    api.route(AuthorDetail, "author_detail", url_prefix + "/authors/<int:id>/", tag="Author")
+    api.route(ArticleList, "article_list", url_prefix + "/aticles/", tag="Article")
+    api.route(ArticleDetail, "article_detail", url_prefix + "/articles/<int:id>/", tag="Article")
