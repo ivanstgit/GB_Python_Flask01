@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from blog.models.database import db
 
 
-class Author(db.Model):
+class Author(db.Model):  # type: ignore
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
 

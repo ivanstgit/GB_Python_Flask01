@@ -40,7 +40,8 @@ def create_article():
     error = None
     form = CreateArticleForm(request.form)
     # добавляем доступные теги в форму
-    form.tags.choices = [(tag.id, tag.name) for tag in Tag.query.order_by("name")]
+    form.tags.choices = [(tag.id, tag.name)
+                         for tag in Tag.query.order_by("name")]
 
     if request.method == "POST" and form.validate_on_submit():
         if current_user.author:  # type: ignore
@@ -52,7 +53,8 @@ def create_article():
             db.session.add(article_author)
             # db.session.flush()
 
-        article = Article(title=form.title.data.strip(), body=form.body.data)  # type: ignore
+        article = Article(title=form.title.data.strip(),
+                          body=form.body.data)  # type: ignore
         article.author = article_author
         if form.tags.data:  # если в форму были переданы теги (были выбраны)
             selected_tags = Tag.query.filter(Tag.id.in_(form.tags.data))
@@ -67,5 +69,5 @@ def create_article():
             current_app.logger.exception("Could not create a new article!")
             error = "Could not create article!"
         else:
-            return redirect(url_for("article.details", id=article.id))
+            return redirect(url_for("article_app.details", id=article.id))
     return render_template("articles/create.html", form=form, error=error)
