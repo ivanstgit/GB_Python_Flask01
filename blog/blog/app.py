@@ -11,6 +11,7 @@ from blog.views.auth import auth_app, login_manager
 from blog.views.user import views as users
 from blog.views.author import views as authors
 from blog.views.article import views as articles
+from blog.api import init_api
 
 
 def create_app() -> Flask:
@@ -20,6 +21,7 @@ def create_app() -> Flask:
     init_components(app)
     register_blueprints(app)
     register_commands(app)
+    init_api(app)
 
     @app.route("/")
     def index():

@@ -31,7 +31,7 @@ def load_user(user_id):
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    return redirect(url_for("auth.login"))
+    return redirect(url_for("auth_app.login"))
 
 
 @auth_app.route("/login/", methods=["GET", "POST"], endpoint="login")
@@ -55,7 +55,8 @@ def login():
     return render_template("auth/login.html", form=form)
 
 
-@auth_app.route("/login-as/", methods=["GET", "POST"], endpoint="login-as")  # type: ignore
+# type: ignore
+@auth_app.route("/login-as/", methods=["GET", "POST"], endpoint="login-as")
 def login_as():
     if not (current_user.is_authenticated and current_user.is_staff):  # type: ignore
         # non-admin users should not know about this feature
@@ -78,7 +79,8 @@ def register():
     form = RegistrationForm(request.form)
     if request.method == "POST" and form.validate_on_submit():
         if User.query.filter_by(email=form.email.data).count():
-            form.email.errors.append("user with this e-mail already exists!")  # type: ignore
+            form.email.errors.append(  # type: ignore
+                "user with this e-mail already exists!")
             return render_template("auth/register.html", form=form)
         user = User(
             first_name=form.first_name.data,
@@ -91,10 +93,10 @@ def register():
         try:
             db.session.commit()
         except IntegrityError:
-            current_app.logger.exception("Could not create user!")
+            current_app.logger.exception("Could not create user!")  # type: ignore
             error = "Could not create user!"
         else:
-            current_app.logger.info("Created user %s", user)
+            current_app.logger.info("Created user %s", user)  # type: ignore
             login_user(user)
             return redirect(url_for("index"))
     return render_template("auth/register.html", form=form, error=error)

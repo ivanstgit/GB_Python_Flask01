@@ -8,7 +8,7 @@ from blog.models.database import db
 from blog.models.article_tag import article_tag_association_table
 
 
-class Article(db.Model):
+class Article(db.Model):  # type: ignore
     id = Column(Integer, primary_key=True)
     author_id = Column(Integer, ForeignKey("author.id"))
     title = Column(String(200), nullable=False, default="", server_default="")
