@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Article list from rest
+{% endblock %}
+{% block body %}
+<h1>Articles (REST API test)</h1>
+<div>
+
+    <div id="myData"></div>
+    <script>
+        console.log('fetching data');
+        fetch('/api/aticles/?include=author%2Ctags&page%5Bnumber%5D=1&page%5Bsize%5D=10')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                console.log(data);
+                appendData(data);
+            })
+            .catch(function (err) {
+                console.log('error: ' + err);
+            });
+
+        function appendData(data) {
+            var mainContainer = document.getElementById("myData");
+            for (var i = 0; i < data.data.length; i++) {
+                var div = document.createElement("div");
+                div.innerHTML = data.data[i].attributes.title;
+                mainContainer.appendChild(div);
+            }
+        }
+    </script>
+
+    <a href="{{ url_for('article_app.create') }}">Create new</a>
+</div>
+{% endblock %}

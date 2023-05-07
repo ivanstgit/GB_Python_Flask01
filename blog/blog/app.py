@@ -2,16 +2,11 @@ import os
 from flask import Flask, render_template
 from flask_migrate import Migrate
 
+from blog.api import init_api, register_api_routes
 from blog.cli import register_commands
-
 from blog.models.database import db
-from blog.models.user import User
+
 from blog.security import flask_bcrypt
-from blog.views.auth import auth_app, login_manager
-from blog.views.user import views as users
-from blog.views.author import views as authors
-from blog.views.article import views as articles
-from blog.api import init_api
 
 
 def create_app() -> Flask:
@@ -21,7 +16,7 @@ def create_app() -> Flask:
     init_components(app)
     register_blueprints(app)
     register_commands(app)
-    init_api(app)
+    register_api_routes(url_prefix="/api")
 
     @app.route("/")
     def index():
@@ -49,6 +44,8 @@ def init_components(app: Flask):
     admin.init_app(app)
 
     # login manager
+    from blog.views.auth import login_manager
+    from blog.models.user import User
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"  # type: ignore
 
@@ -56,9 +53,16 @@ def init_components(app: Flask):
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+    init_api(app)
+
 
 def register_blueprints(app: Flask):
-    app.register_blueprint(users.user_app)
-    app.register_blueprint(authors.author_app)
-    app.register_blueprint(articles.article_app)
+    from blog.views.auth import auth_app
+    from blog.views.user import views as users
+    from blog.views.author import views as authors
+    from blog.views.article import views as articles
+
+    app.register_blueprint(users.user_app, url_prefix="/users")
+    app.register_blueprint(authors.author_app, url_prefix="/authors")
+    app.register_blueprint(articles.article_app, url_prefix="/articles")
     app.register_blueprint(auth_app)
